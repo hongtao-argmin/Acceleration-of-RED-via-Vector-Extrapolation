@@ -104,7 +104,7 @@ Count_pre = 0;
 
 Start_Time = tic;
 % apply the denoising engine
-f_x_est = Denoiser(x_est, effective_sigma);%*0.999^(k-1)/1.005^(k-1)
+f_x_est = Denoiser(x_est, effective_sigma);
 % outer iterations
 for k = 1:1:outer_iters
     % solve Az = b by a variant of the SD method, where
