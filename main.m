@@ -243,7 +243,7 @@ end
 fprintf(' Done.\n');
 psnr_input = ComputePSNR(orig_im, input_im);
 
-%% set parameters in MPE
+%% set parameters in VE
 param_VE.KK = 5;       % 8
 param_VE.Iter_pre = 0; % 8
 param_VE.isVE = true;
@@ -283,7 +283,7 @@ psnr_fp = psnr_out_set_fp(end);
 out_fp_im = MergeChannels(input_im,est_fp_im);
 fprintf('Done.\n');
 
-%% call MPE
+%% call VE
 fprintf('Restoring using RED-VE: Fixed-Point method\n');
 param_VE.isVE = true;
 [est_fp_VE_im,psnr_out_set_fp_VE,fun_val_set_fp_VE,CPU_time_set_fp_VE] = RunVEFP(input_luma_im,...
