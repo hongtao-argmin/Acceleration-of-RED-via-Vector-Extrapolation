@@ -178,7 +178,6 @@ for k = 1:1:outer_iters
     end
     %%%%%%%%%%%%%%%  VE part %%%%%%%%%%%%%%%%%
     CPU_time_set = [CPU_time_set;toc(Start_Time)];
-    Start_Time = tic;
     if k == outer_iters
         f_x_est = Denoiser(x_est, effective_sigma);
     end
@@ -197,6 +196,7 @@ for k = 1:1:outer_iters
         psnr_out = ComputePSNR(orig_im, im_out);
         fprintf('%7i %12.5f %12.5f \n', k, psnr_out, fun_val);
     end
+    Start_Time = tic;
 end
 CPU_time_set = cumsum(CPU_time_set);
 return
