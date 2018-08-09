@@ -115,54 +115,6 @@ for k = 1:1:outer_iters
         A = fft_HtH + lambda;
         x_est = real(ifft2( b./A ));
         x_est = max( min(x_est, 255), 0);
-        Count_pre = Count_pre+1;
-        if param_VE.isVE && Count_pre>param_VE.Iter_pre
-            if VE_count<= param_VE.KK+1
-                QQ_VE(:,VE_count) = x_est(:);
-                VE_count = VE_count+1;
-            end
-            if VE_count>param_VE.KK+1
-                x_VE_0 = extrapolate(x_VE_0,param_VE.KK,QQ_VE,param_VE.method);
-                VE_count = 1;
-                x_est_VE = reshape(x_VE_0,size(x_est));
-                x_est_VE = max( min(x_est_VE, 255), 0);
-                
-                if isempty(param_VE.isRoubst) || ~param_VE.isRoubst
-                    x_est = x_est_VE;
-                    if k < outer_iters
-                        f_x_est = Denoiser(x_est, effective_sigma);
-                    end
-                elseif param_VE.isRoubst
-                    f_x_est = Denoiser(x_est, effective_sigma);
-                    f_x_est_VE = Denoiser(x_est_VE, effective_sigma);
-                    fun_val_1 = ...
-                        Cost_Func(y, x_est, ForwardFunc, input_sigma,lambda, f_x_est);
-                    fun_val_2 = ...
-                        Cost_Func(y, x_est_VE, ForwardFunc, input_sigma,lambda, f_x_est_VE);
-                    if rho*fun_val_1>fun_val_2
-                        x_est = x_est_VE;
-                        f_x_est = f_x_est_VE;
-                    end
-                end
-                if param_VE.Iter_pre == 0
-                    x_VE_0 = x_est(:);
-                end
-                Count_pre = 0;
-            else
-                if k < outer_iters
-                    f_x_est = Denoiser(x_est, effective_sigma);
-                end
-            end
-        elseif  param_VE.isVE && Count_pre == param_VE.Iter_pre
-            x_VE_0 = x_est(:);
-            if k < outer_iters
-                f_x_est = Denoiser(x_est, effective_sigma);
-            end
-        else
-            if k < outer_iters
-                f_x_est = Denoiser(x_est, effective_sigma);
-            end
-        end
     else
         for j = 1:1:inner_iters % gradient method
             b = Ht_y + lambda*f_x_est;
@@ -173,55 +125,58 @@ for k = 1:1:outer_iters
             x_est = x_est + mu_opt*res;
             x_est = max( min(x_est, 255), 0);
         end
-        Count_pre = Count_pre+1;
-        if param_VE.isVE && Count_pre>param_VE.Iter_pre
-            if VE_count<= param_VE.KK+1
-                QQ_VE(:,VE_count) = x_est(:);
-                VE_count = VE_count+1;
-            end
-            if VE_count>param_VE.KK+1
-                x_VE_0 = extrapolate(x_VE_0,param_VE.KK,QQ_VE,param_VE.method);
-                VE_count = 1;
-                x_est_VE = reshape(x_VE_0,size(x_est));
-                x_est_VE = max( min(x_est_VE, 255), 0);
-                
-                if isempty(param_VE.isRoubst) || ~param_VE.isRoubst
-                    x_est = x_est_VE;
-                    if k < outer_iters
-                        f_x_est = Denoiser(x_est, effective_sigma);
-                    end
-                elseif param_VE.isRoubst
-                    f_x_est = Denoiser(x_est, effective_sigma);
-                    f_x_est_VE = Denoiser(x_est_VE, effective_sigma);
-                    fun_val_1 = ...
-                        Cost_Func(y, x_est, ForwardFunc, input_sigma,lambda, f_x_est);
-                    fun_val_2 = ...
-                        Cost_Func(y, x_est_VE, ForwardFunc, input_sigma,lambda, f_x_est_VE);
-                    if rho*fun_val_1>fun_val_2
-                        x_est = x_est_VE;
-                        f_x_est = f_x_est_VE;
-                    end
-                end
-                if param_VE.Iter_pre == 0
-                    x_VE_0 = x_est(:);
-                end
-                Count_pre = 0;
-            else
+    end
+    
+    %%%%%%%%%%%%%%%  VE part %%%%%%%%%%%%%%%%%
+    Count_pre = Count_pre+1;
+    if param_VE.isVE && Count_pre>param_VE.Iter_pre
+        if VE_count<= param_VE.KK+1
+            QQ_VE(:,VE_count) = x_est(:);
+            VE_count = VE_count+1;
+        end
+        if VE_count>param_VE.KK+1
+            x_VE_0 = extrapolate(x_VE_0,param_VE.KK,QQ_VE,param_VE.method);
+            VE_count = 1;
+            x_est_VE = reshape(x_VE_0,size(x_est));
+            x_est_VE = max( min(x_est_VE, 255), 0);
+            
+            if isempty(param_VE.isRoubst) || ~param_VE.isRoubst
+                x_est = x_est_VE;
                 if k < outer_iters
                     f_x_est = Denoiser(x_est, effective_sigma);
                 end
-            end
-        elseif  param_VE.isVE && Count_pre == param_VE.Iter_pre
-            x_VE_0 = x_est(:);
-            if k < outer_iters
+            elseif param_VE.isRoubst
                 f_x_est = Denoiser(x_est, effective_sigma);
+                f_x_est_VE = Denoiser(x_est_VE, effective_sigma);
+                fun_val_1 = ...
+                    Cost_Func(y, x_est, ForwardFunc, input_sigma,lambda, f_x_est);
+                fun_val_2 = ...
+                    Cost_Func(y, x_est_VE, ForwardFunc, input_sigma,lambda, f_x_est_VE);
+                if rho*fun_val_1>fun_val_2
+                    x_est = x_est_VE;
+                    f_x_est = f_x_est_VE;
+                end
             end
+            if param_VE.Iter_pre == 0
+                x_VE_0 = x_est(:);
+            end
+            Count_pre = 0;
         else
             if k < outer_iters
                 f_x_est = Denoiser(x_est, effective_sigma);
             end
         end
+    elseif  param_VE.isVE && Count_pre == param_VE.Iter_pre
+        x_VE_0 = x_est(:);
+        if k < outer_iters
+            f_x_est = Denoiser(x_est, effective_sigma);
+        end
+    else
+        if k < outer_iters
+            f_x_est = Denoiser(x_est, effective_sigma);
+        end
     end
+    %%%%%%%%%%%%%%%  VE part %%%%%%%%%%%%%%%%%
     CPU_time_set = [CPU_time_set;toc(Start_Time)];
     Start_Time = tic;
     if k == outer_iters
@@ -233,7 +188,7 @@ for k = 1:1:outer_iters
     im_out = x_est(1:size(orig_im,1), 1:size(orig_im,2));
     psnr_out = ComputePSNR(orig_im, im_out);
     psnr_out_set = [psnr_out_set;psnr_out];
-   
+    
     if ~QUIET && (mod(k,PRINT_MOD) == 0 || k == outer_iters)
         % evaluate the cost function
         fun_val = Cost_Func(y, x_est, ForwardFunc, input_sigma,...
@@ -245,4 +200,3 @@ for k = 1:1:outer_iters
 end
 CPU_time_set = cumsum(CPU_time_set);
 return
-
