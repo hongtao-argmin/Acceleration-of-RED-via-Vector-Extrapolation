@@ -302,7 +302,7 @@ fprintf('The final objective of FP is %f \n',fun_val_set_fp(end))
 fprintf('The final objective of FP-MPE is %f \n',fun_val_set_fp_VE(end))
 %% plot figure
 figure
-loglog((1:length(fun_val_set_fp)),fun_val_set_fp,'k--',...
+semilogx((1:length(fun_val_set_fp)),fun_val_set_fp,'k--',...
      (1:length(fun_val_set_fp_VE)),fun_val_set_fp_VE,'r-','linewidth',1.5)
 xlabel('Iteration');%z =
 % set(z,'interpreter','latex')
@@ -326,7 +326,7 @@ grid on
 % print(['/home/tao/Dropbox/Acceleration-RED-MPE/manuscript/fig/' 'PSNR_' degradation_model '_deblur_' Name],'-dpdf','-bestfit')
 
 figure
-semilogx(CPU_time_set_fp,fun_val_set_fp,'k--',...
+plot(CPU_time_set_fp,fun_val_set_fp,'k--',...
     CPU_time_set_fp_VE,fun_val_set_fp_VE,'r-','linewidth',1.5)
 z = xlabel('${Seconds} $');
 set(z,'interpreter','latex')
@@ -342,7 +342,6 @@ grid on
 %Set_Images_SR/
 % print(['/home/tao/Dropbox/Acceleration-RED-MPE/manuscript/fig/' 'Obj_' degradation_model '_deblur_' Name '_CPU'],'-dpdf','-bestfit')
 %%
-
 save([Name '-' degradation_model '.mat'],'fun_val_set_fp','fun_val_set_fp_VE','psnr_out_set_fp','psnr_out_set_fp_VE','CPU_time_set_fp','CPU_time_set_fp_VE')
 
 %% display final results
