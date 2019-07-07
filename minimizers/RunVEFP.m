@@ -34,6 +34,7 @@
 %   params.psf     - the Point Spread Function (used only when
 %                    use_fft == true).
 %   params.effective_sigma - the input noise level to the denoiser
+%   param_VE: see the definition in the main file.
 %   orig_im - the original image, used for PSNR evaluation ONLY
 %
 % Outputs:
@@ -44,9 +45,7 @@
 function [im_out, psnr_out_set,fun_val_set,CPU_time_set,resid_norm_set] = RunVEFP(y, ForwardFunc, BackwardFunc,...
     InitEstFunc, input_sigma, params, orig_im,param_VE)
 
-if param_VE.KK<=0
-    error('window is too large')
-end
+
 % print infp every PRINT_MOD steps
 QUIET = 0;
 PRINT_MOD = floor(params.outer_iters/10);
