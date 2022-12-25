@@ -6,3 +6,5 @@ Note that this software is highly depend on the original RED code, see https://g
 
 
 If you find any bug, please drop an email to Tao Hong: hongtao@cs.technion.ac.il. 
+
+https://hongtao-argmin.github.io
